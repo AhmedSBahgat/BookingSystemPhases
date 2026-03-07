@@ -54,32 +54,5 @@ sequenceDiagram
         end
 
     else Client-side validation fails
-
-sequenceDiagram
-    participant U as User (Browser)
-    participant FE as Frontend (resources.html + resources.js)
-    participant API as Express /api/resources
-    participant DB as PostgreSQL (resources)
-
-    %% User opens resources page
-    U->>FE: Open /resources page
-    FE->>FE: loadResources() on page load
-
-    FE->>API: GET /api/resources
-    API->>DB: SELECT * FROM resources ORDER BY created_at DESC
-
-    alt DB query succeeds
-        DB-->>API: Rows (list of resources)
-        API-->>FE: 200 OK { ok: true, data: [ ... ] }
-        FE->>FE: renderResourceList(resources)
-        FE->>U: Display resource cards/list in UI
-
-    else DB query fails
-        DB-->>API: Error
-        API-->>FE: 500 Internal Server Error { ok: false, error: "Database error" }
-        FE->>FE: renderResourceList([]) and console.error(...)
-        FE->>U: Show empty list / generic error
-    end
-
         FE->>U: Show inline validation errors (no request sent)
     end

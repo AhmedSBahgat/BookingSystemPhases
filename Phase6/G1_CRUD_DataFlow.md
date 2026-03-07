@@ -219,6 +219,3 @@ sequenceDiagram
 ```
 
 ```
-
-Paste all of this into the file, save, and GitHub’s “Preview” should render all four diagrams without errors.```
-

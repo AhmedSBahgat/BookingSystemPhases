@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservations | Booking System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { brand: { primary: '#e10e49', light: '#ffffff', dark: '#1e1e1e', blue: '#263f6a', green: '#284e36', rose: '#c24d52' } }, boxShadow: { soft: '0 8px 40px rgba(0,0,0,0.45)' } } }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col bg-brand-light text-brand-dark">
+  <header class="sticky top-0 z-40 bg-brand-dark text-white shadow-soft">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="flex h-16 items-center justify-between">
+        <a href="/" class="flex items-center gap-3 flex-1">
+          <img src="/logo.svg" alt="Booking System" class="h-10 w-10" />
+          <div class="leading-tight">
+            <span class="block text-sm font-semibold">Booking System</span>
+            <span class="block text-xs text-white/70">Secure resource booking</span>
+          </div>
+        </a>
+        <nav class="flex items-center gap-3">
+          <a href="/resources" class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/10 w-40 text-center">Resources</a>
+          <a href="/reservations" class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold bg-white/10 w-40 text-center">Reservations</a>
+          <button onclick="logout()" class="rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white w-40 text-center">Sign out</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <main class="mx-auto max-w-7xl px-6 flex-grow w-full">
+    <section class="py-12">
+      <div class="rounded-3xl bg-white p-8 shadow-soft">
+        <h1 class="text-3xl font-semibold">Reservations</h1>
+        <p class="mt-2 text-sm text-black/70">Create, view, update and delete reservations.</p>
+      </div>
+    </section>
+    <section class="pb-16">
+      <div class="grid gap-8 lg:grid-cols-12">
+        <div class="lg:col-span-8">
+          <div class="rounded-3xl bg-white p-8 shadow-soft">
+            <h2 class="text-xl font-semibold">Reservation form</h2>
+            <div id="formMessage" class="hidden mt-6 rounded-2xl border px-4 py-3 text-sm"></div>
+            <form class="mt-8 space-y-6" id="reservationForm">
+              <input type="hidden" id="reservationId" />
+              <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                  abel class="block text-sm font-semibold">Resource ID</label>
+                  <input type="number" id="resourceId" min="1" required class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none" />
+                </div>
+                <div>
+                  abel class="block text-sm font-semibold">User ID</label>
+                  <input type="number" id="userId" min="1" required class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none" />
+                </div>
+              </div>
+              <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                  abel class="block text-sm font-semibold">Start time</label>
+                  <input type="datetime-local" id="startTime" required class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none" />
+                </div>
+                <div>
+                  abel class="block text-sm font-semibold">End time</label>
+                  <input type="datetime-local" id="endTime" required class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none" />
+                </div>
+              </div>
+              <div>
+                abel class="block text-sm font-semibold">Note</label>
+                <input type="text" id="note" placeholder="Team meeting" class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none" />
+              </div>
+              <div>
+                abel class="block text-sm font-semibold">Status</label>
+                <select id="status" class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none">
+                  <option value="active">active</option>
+                  <option value="cancelled">cancelled</option>
+                </select>
+              </div>
+              <div class="grid gap-4 grid-cols-2 sm:grid-cols-4">
+                <button type="submit" class="rounded-2xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white">Create</button>
+                <button type="button" id="updateBtn" disabled class="rounded-2xl border border-brand-blue px-6 py-3 text-sm font-semibold text-brand-blue disabled:opacity-40">Update</button>
+                <button type="button" id="deleteBtn" disabled class="rounded-2xl border border-red-400 px-6 py-3 text-sm font-semibold text-red-500 disabled:opacity-40">Delete</button>
+                <button type="button" id="resetBtn" class="rounded-2xl border border-brand-dark px-6 py-3 text-sm font-semibold">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <aside class="lg:col-span-4">
+          <div class="rounded-3xl bg-white p-6 shadow-soft">
+            <h3 class="font-semibold">Reservation list</h3>
+            <p class="mt-2 text-xs text-black/50">Click an item to load it into the form.</p>
+            <div id="reservationList" class="mt-4 space-y-3">
+              <p class="text-sm text-black/40">No reservations yet.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-brand-dark text-white">
+    <div class="mx-auto max-w-7xl px-6 py-6">
+      <p class="text-xs text-white/50"><span id="year"></span> Ville Heikkiniemi. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    var API = "/api/reservations";
+    function getToken() { return localStorage.getItem("token"); }
+    function logout() { localStorage.removeItem("token"); window.location.href = "/login.html"; }
+    function showMessage(text, type) {
+      var el = document.getElementById("formMessage");
+      var c = { success: "border-green-300 bg-green-50 text-green-800", error: "border-red-300 bg-red-50 text-red-800", info: "border-blue-300 bg-blue-50 text-blue-800" };
+      el.className = "mt-6 rounded-2xl border px-4 py-3 text-sm " + (c[type] || c.info);
+      el.textContent = text;
+      el.classList.remove("hidden");
+    }
+    function clearMessage() { var el = document.getElementById("formMessage"); el.classList.add("hidden"); el.textContent = ""; }
+    function toLocal(iso) {
+      if (!iso) return "";
+      var d = new Date(iso);
+      function p(n) { return String(n).padStart(2,"0"); }
+      return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes());
+    }
+    function clearForm() {
+      ["reservationId","resourceId","userId","startTime","endTime","note"].forEach(function(id){ document.getElementById(id).value=""; });
+      document.getElementById("status").value = "active";
+      document.getElementById("updateBtn").disabled = true;
+      document.getElementById("deleteBtn").disabled = true;
+      clearMessage();
+    }
+    function loadIntoForm(r) {
+      document.getElementById("reservationId").value = r.id;
+      document.getElementById("resourceId").value = r.resource_id;
+      document.getElementById("userId").value = r.user_id;
+      document.getElementById("startTime").value = toLocal(r.start_time);
+      document.getElementById("endTime").value = toLocal(r.end_time);
+      document.getElementById("note").value = r.note || "";
+      document.getElementById("status").value = r.status || "active";
+      document.getElementById("updateBtn").disabled = false;
+      document.getElementById("deleteBtn").disabled = false;
+      showMessage("Loaded reservation #" + r.id, "info");
+    }
+    function renderList(rows) {
+      var list = document.getElementById("reservationList");
+      if (!rows || rows.length === 0) { list.innerHTML = '<p class="text-sm text-black/40">No reservations yet.</p>'; return; }
+      list.innerHTML = "";
+      rows.forEach(function(r) {
+        var div = document.createElement("div");
+        div.className = "cursor-pointer rounded-2xl border border-black/10 p-4 hover:border-red-400 hover:bg-red-50 transition-all duration-200";
+        div.innerHTML = '<p class="text-sm font-semibold">#'+r.id+' Resource '+r.resource_id+'</p><p class="mt-1 text-xs text-black/50">'+new Date(r.start_time).toLocaleString()+' to '+new Date(r.end_time).toLocaleString()+'</p><p class="mt-1 text-xs text-black/50">Status: '+r.status+(r.note?' | '+r.note:'')+'</p>';
+        div.addEventListener("click", function(){ loadIntoForm(r); });
+        list.appendChild(div);
+      });
+    }
+    function getPayload() {
+      return {
+        resourceId: Number(document.getElementById("resourceId").value),
+        userId: Number(document.getElementById("userId").value),
+        startTime: new Date(document.getElementById("startTime").value).toISOString(),
+        endTime: new Date(document.getElementById("endTime").value).toISOString(),
+        note: document.getElementById("note").value || null,
+        status: document.getElementById("status").value || "active"
+      };
+    }
+    async function fetchReservations() {
+      try {
+        var res = await fetch(API, { headers: { "Authorization": "Bearer "+getToken() } });
+        var body = await res.json();
+        var rows = Array.isArray(body) ? body : (body.data || body.reservations || []);
+        renderList(rows);
+      } catch(e) { showMessage("Failed to load reservations", "error"); }
+    }
+    async function createReservation(e) {
+      e.preventDefault();
+      try {
+        var res = await fetch(API, { method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer "+getToken()}, body:JSON.stringify(getPayload()) });
+        var body = await res.json().catch(function(){ return {}; });
+        if (!res.ok) { showMessage(body.error || "Failed to create", "error"); return; }
+        showMessage("Reservation created (ID " + (body.data ? body.data.id : "") + ")", "success");
+        clearForm(); fetchReservations();
+      } catch(e) { showMessage("Network error", "error"); }
+    }
+    async function updateReservation() {
+      var id = document.getElementById("reservationId").value;
+      try {
+        var res = await fetch(API+"/"+id, { method:"PUT", headers:{"Content-Type":"application/json","Authorization":"Bearer "+getToken()}, body:JSON.stringify(getPayload()) });
+        var body = await res.json().catch(function(){ return {}; });
+        if (!res.ok) { showMessage(body.error || "Failed to update", "error"); return; }
+        showMessage("Reservation updated (ID " + id + ")", "success");
+        clearForm(); fetchReservations();
+      } catch(e) { showMessage("Network error", "error"); }
+    }
+    async function deleteReservation() {
+      var id = document.getElementById("reservationId").value;
+      if (!confirm("Delete reservation " + id + "?")) return;
+      try {
+        var res = await fetch(API+"/"+id, { method:"DELETE", headers:{"Authorization":"Bearer "+getToken()} });
+        if (!res.ok && res.status !== 204) { showMessage("Failed to delete", "error"); return; }
+        showMessage("Reservation deleted (ID " + id + ")", "success");
+        clearForm(); fetchReservations();
+      } catch(e) { showMessage("Network error", "error"); }
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      if (!getToken()) { window.location.href = "/login.html"; return; }
+      document.getElementById("reservationForm").addEventListener("submit", createReservation);
+      document.getElementById("updateBtn").addEventListener("click", updateReservation);
+      document.getElementById("deleteBtn").addEventListener("click", deleteReservation);
+      document.getElementById("resetBtn").addEventListener("click", clearForm);
+      fetchReservations();
+    });
+  </script>
+</body>
+</html>

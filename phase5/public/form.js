@@ -20,7 +20,8 @@ function showFormMessage(type, message) {
   if (!el) return;
 
   // Base styling
-  el.className = "mt-6 rounded-2xl border px-4 py-3 text-sm whitespace-pre-line";
+  el.className =
+    "mt-6 rounded-2xl border px-4 py-3 text-sm whitespace-pre-line";
   el.classList.remove("hidden");
 
   // Type-specific styling (Tailwind utility classes)
@@ -29,7 +30,7 @@ function showFormMessage(type, message) {
   } else if (type === "info") {
     el.classList.add("border-amber-200", "bg-amber-50", "text-amber-900");
   } else {
-    // error (default)
+    // error (default) – red, as teacher requested
     el.classList.add("border-rose-200", "bg-rose-50", "text-rose-900");
   }
 
@@ -47,7 +48,7 @@ function clearFormMessage() {
   el.classList.add("hidden");
 }
 
-// Timestamp (for logging)
+// Timestamp (for logging, if needed elsewhere)
 function timestamp() {
   const now = new Date();
   return now.toISOString().replace("T", " ").replace("Z", "");
@@ -78,6 +79,20 @@ async function readResponseBody(response) {
   }
 }
 
+// Map technical field names to user-friendly labels
+function humanLabel(field) {
+  switch (field) {
+    case "resourceName":
+      return "Resource name";
+    case "resourceDescription":
+      return "Resource description";
+    case "resourcePrice":
+      return "Price";
+    default:
+      return "Field";
+  }
+}
+
 /**
  * Build a readable message for field validation errors returned by the API.
  * Expected format: { errors: [ { field, msg }, ... ] }
@@ -88,12 +103,14 @@ function buildValidationMessage(errors) {
   }
 
   const lines = errors.map((e) => {
-    const field = e.field || "field";
-    const msg = e.msg || "Invalid value";
+    const field = humanLabel(e.field);
+    const msg = e.msg || "Invalid value.";
     return `• ${field}: ${msg}`;
   });
 
-  return `Your request was blocked by server-side validation:\n\n${lines.join("\n")}`;
+  return `Your request was blocked by server-side validation:\n\n${lines.join(
+    "\n"
+  )}`;
 }
 
 /**
@@ -102,7 +119,7 @@ function buildValidationMessage(errors) {
 function buildGenericErrorMessage(status, body) {
   const details = body?.details ? `\n\nDetails: ${body.details}` : "";
   const error = body?.error ? body.error : "Request failed";
-  return `Server returned an error (${status}).\n\nReason: ${error}${details}`;
+  return `Server returned an error.\n\nReason: ${error}${details}`;
 }
 
 // -------------- Form wiring --------------
@@ -119,7 +136,8 @@ async function onSubmit(event) {
   const actionValue = submitter && submitter.value ? submitter.value : "create";
 
   const selectedUnit =
-    document.querySelector('input[name="resourcePriceUnit"]:checked')?.value ?? "";
+    document.querySelector('input[name="resourcePriceUnit"]:checked')?.value ??
+    "";
 
   const priceRaw = $("resourcePrice")?.value ?? "";
   const resourcePrice = priceRaw === "" ? 0 : Number(priceRaw);
@@ -155,12 +173,12 @@ async function onSubmit(event) {
         return;
       }
 
-      // 409 = duplicate resourceName (our new feature)
+      // 409 = duplicate resourceName – shown as red error, no HTTP code
       if (response.status === 409) {
         const msg =
           body?.details ||
-          "A resource with the same name already exists. Please choose another name.";
-        showFormMessage("info", `Duplicate blocked (409):\n\n${msg}`);
+          "A resource with this name already exists. Please choose another name.";
+        showFormMessage("error", msg);
         return;
       }
 
@@ -173,30 +191,23 @@ async function onSubmit(event) {
     // Success handling (2xx)
     // -----------------------------------------
     // We expect: { ok: true, data: {...} }
-    const createdAtIso = body?.data?.created_at || "";
-    const createdAt = createdAtIso
-      ? createdAtIso.replace("T", " ").replace("Z", "")
-      : "";
-
-    const msgLines = [];
-    msgLines.push(`Name ➡️ ${body?.data?.name ?? ""}`);
-    if (createdAt) msgLines.push(`Created at ➡️ ${createdAt}`);
-    msgLines.push(`ID in database ➡️ ${body?.data?.id ?? ""}`);
-
-    const msg = msgLines.join("\n");
-    showFormMessage("success", msg);
+    const name = body?.data?.name || "The resource";
+    const successMsg = `${name} was created successfully and is now available for booking.`;
+    showFormMessage("success", successMsg);
 
     // Notify UI layer (resources.js)
     if (typeof window.onResourceActionSuccess === "function") {
       window.onResourceActionSuccess({
         action: actionValue,
-        data: "success"
+        data: "success",
       });
     }
-
   } catch (err) {
     // Network errors, CORS issues, server unreachable, etc.
     console.error("POST error:", err);
-    showFormMessage("error", "Network error: Could not reach the server. Check your environment and try again.");
+    showFormMessage(
+      "error",
+      "Network error: Could not reach the server. Check your environment and try again."
+    );
   }
 }

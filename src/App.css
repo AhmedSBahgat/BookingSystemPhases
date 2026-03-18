@@ -1,0 +1,106 @@
+kbody {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f9fafb;
+}
+
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.site-header {
+  background: #0f172a;
+  color: #fff;
+  padding: 1rem 2rem;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.nav a {
+  color: #e5e7eb;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.nav a:hover {
+  color: #fff;
+}
+
+.hero {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+  color: #fff;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.primary-btn {
+  background: #facc15;
+  color: #1f2937;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  filter: brightness(1.05);
+}
+
+.section {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.section h2 {
+  margin-bottom: 1rem;
+}
+
+.feature-list {
+  padding-left: 1.2rem;
+}
+
+.feature-list li {
+  margin-bottom: 0.5rem;
+}
+
+.site-footer {
+  background: #0f172a;
+  color: #9ca3af;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+}

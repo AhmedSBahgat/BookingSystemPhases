@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Registry</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-grid">
+      <section>
+        <h1 class="site-title">
+          <a href="#" class="site-title-link">ClientCore</a>
+        </h1>
+        <p class="site-tagline">A minimal customer registry system.</p>
+      </section>
+
+      <aside class="author-card">
+        <p><strong>Author:</strong> <span id="author-name">Ahmed Bahgat</span></p>
+        <p><strong>Group ID:</strong> <span id="group-id">AITS24P</span></p>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <div class="container layout">
+      <section class="hero-card" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">System Overview</h2>
+        <p>
+          This customer management interface allows users to add new customers to the registry,
+          update existing customer information, and remove customer records when needed.
+        </p>
+        <p>
+          The <strong>Customer Management</strong> area is reserved for create, update, and delete actions,
+          while the <strong>Customer Records</strong> area displays all customer data currently stored in the registry.
+        </p>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel" aria-labelledby="customer-management-heading">
+          <h2 id="customer-management-heading">Customer Management</h2>
+          <p class="panel-description">
+            Use this area to add new customers, edit existing customer information, and delete records.
+          </p>
+
+          <div id="customer-form" class="form-shell">
+            <div id="form-status" class="status-message" aria-live="polite"></div>
+
+            <form id="management-form" novalidate>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="firstname">First name</label>
+                  <input type="text" id="firstname" name="firstname" required />
+                </div>
+
+                <div class="form-field">
+                  <label for="lastname">Last name</label>
+                  <input type="text" id="lastname" name="lastname" required />
+                </div>
+
+                <div class="form-field">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" required />
+                </div>
+
+                <div class="form-field">
+                  <label for="phone">Phone</label>
+                  <input type="text" id="phone" name="phone" />
+                </div>
+
+                <div class="form-field form-field-full">
+                  <label for="birthdate">Birth date</label>
+                  <input type="date" id="birthdate" name="birthdate" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" id="save-btn" class="btn btn-primary">Add customer</button>
+                <button type="button" id="delete-btn" class="btn btn-danger" disabled>Delete selected</button>
+                <button type="button" id="reset-btn" class="btn btn-secondary">Clear form</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="customer-records-heading">
+          <h2 id="customer-records-heading">Customer Records</h2>
+          <p class="panel-description">
+            This area displays all customer records currently stored in the registry.
+          </p>
+
+          <div class="records-toolbar">
+            <p id="records-summary" class="records-summary">Loading customers...</p>
+          </div>
+
+          <div id="customer-list" class="records-list" aria-live="polite">
+            <p>Customer records from the registry will be displayed here later.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>A minimal customer registry system.</p>
+    </div>
+  </footer>
+</body>
+</html>
